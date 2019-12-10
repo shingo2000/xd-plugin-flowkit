@@ -15,9 +15,9 @@
     "height" : 48
   } ],
   "uiEntryPoints" : [ {
-    "label" : "Create Rectangle",
-    "type" : "menu",
-    "commandId" : "createRectangle"
-  } ],
+      "type": "panel",
+      "label": "Enlarge a Rectangle",
+      "panelId": "enlargeRectangle"
+    } ],
   "version" : "0.0.1"
 }
