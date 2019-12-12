@@ -83,7 +83,7 @@
      y: 10,
      width: 100,
      height: 100,
-     edgeType: "arrow2",
+     edgeType: "arrow1",
      lineType: actionName,
      lineWidth: 1,
      color: "#333333"
@@ -202,7 +202,7 @@
    const lineWidth = parms.lineWidth;
    const color = parms.color;
 
-   let p0,p1,p2;
+   let p0,p1,p2,p3;
    let pathData = "";
    let stroke;
    let fill;
@@ -226,15 +226,33 @@
      case "arrow2":
 
        if(toRight){
-         p0 = (x-15) + "," + (y-10);
+         p0 = (x-15) + "," + (y-8);
          p1 = x + "," + y;
-         p2 = (x-15) + "," + (y+10);
+         p2 = (x-15) + "," + (y+8);
        }else{
-         p0 = (x+15) + "," + (y-10);
+         p0 = (x+15) + "," + (y-8);
          p1 = x + "," + y;
-         p2 = (x+15) + "," + (y+10);
+         p2 = (x+15) + "," + (y+8);
        }
        pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p0}`;
+       stroke = new Color(color);
+       fill = new Color(color);
+
+     break;
+     case "arrow3":
+
+       if(toRight){
+         p0 = (x-15) + "," + (y-8);
+         p1 = x + "," + y;
+         p2 = (x-15) + "," + (y+8);
+         p3 = (x-12) + "," + y;
+       }else{
+         p0 = (x+15) + "," + (y-8);
+         p1 = x + "," + y;
+         p2 = (x+15) + "," + (y+8);
+         p3 = (x+12) + "," + y;
+       }
+       pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} ${p0}`;
        stroke = new Color(color);
        fill = new Color(color);
 
