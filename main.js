@@ -13,95 +13,86 @@
    console.log("create");
    const html = `
 <style>
-    .break {
-        flex-wrap: wrap;
-    }
-    label.row > span {
-        color: #8E8E8E;
-        width: 20px;
-        text-align: right;
-        font-size: 9px;
-    }
-    label.row input {
-        flex: 1 1 auto;
-    }
-    form {
-        width:90%;
-        margin: -20px;
-        padding: 0px;
-    }
-    .show {
-        display: block;
-    }
-    .hide {
-        display: none;
-    }
+  .actionButton {
+    width: 100%;
+    background: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    display: block;
+    border: 1px solid #fff;
+    margin-bottom: 4px;
+  }
+  .actionButton:hover{
+    border: 1px solid #999;
+  }
+  .actionButton span{
+    font-size: 108%;
+    line-height: 24px;
+    display: inline-block;
+    color: #333;
+    text-decoration: none;
+  }
+  .actionButton img{
+    width: 24px; height: 24px;
+    margin-right: 16px;
+  }
 </style>
-
-<form method="dialog" id="main">
-    <div class="row break">
-        <label class="row">
-            <span>↕︎</span>
-            <input type="number" uxp-quiet="true" id="txtV" value="10" placeholder="Height" />
-        </label>
-        <label class="row">
-            <span>↔︎</span>
-            <input type="number" uxp-quiet="true" id="txtH" value="10" placeholder="Width" />
-        </label>
-    </div>
-    <footer><button id="ok" type="submit" uxp-variant="cta">Apply</button></footer>
-</form>
-
-<p id="warning">This plugin requires you to select a rectangle in the document. Please select a rectangle.</p>
-`;
-
-  function increaseRectangleSize() { // [2]
-    const { editDocument } = require("application"); // [3]
-    const height = Number(document.querySelector("#txtV").value); // [4]
-    const width = Number(document.querySelector("#txtH").value); // [5]
-
-    // [6]
+<a href="#" data-action="straight" class="actionButton">
+  <img src="assets/icon_straight.png" />
+  <span>直線の矢印</span>
+</a>
+<a href="#" data-action="curve" class="actionButton">
+  <img src="assets/icon_curve.png" />
+  <span>折れ線の矢印</span>
+</a>
+<a href="#" data-action="snake" class="actionButton">
+  <img src="assets/icon_snake.png" />
+  <span>鍵型の矢印</span>
+</a>
+  `;
+  function onActionButton(e){
+    let actionName = e.currentTarget.getAttribute('data-action');
+    const { editDocument } = require("application");
     editDocument({ editLabel: "Increase rectangle size" }, function(selection) {
-      const selectedRectangle = selection.items[0]; // [7]
-      selectedRectangle.width += width; // [8]
-      selectedRectangle.height += height;
+      draw(actionName, selection);
     });
+
   }
 
-  panel = document.createElement("div"); // [9]
-  panel.innerHTML = html; // [10]
-  panel.querySelector("form").addEventListener("submit", increaseRectangleSize); // [11]
-
-  return panel; // [12]
+  panel = document.createElement("div");
+  panel.innerHTML = html;
+  let buttons = panel.querySelectorAll(".actionButton");
+  for(let i = 0; i < buttons.length; i++){
+    buttons[i].addEventListener("click", onActionButton);
+  }
+  return panel;
  }
 
  function show(event) {
-   console.log("show",event);
-   if (!panel) event.node.appendChild(create()); // [2]
+   if (!panel) event.node.appendChild(create());
  }
 
  function update(selection) {
    console.log("update",selection);
-  const { Rectangle } = require("scenegraph"); // [2]
-
-  const form = document.querySelector("form"); // [3]
-  const warning = document.querySelector("#warning"); // [4]
-
-  if (!selection || !(selection.items[0] instanceof Rectangle)) { // [5]
-    form.className = "hide";
-    warning.className = "show";
-  } else {
-    form.className = "show";
-    warning.className = "hide";
-  }
  }
 
- function rectangleHandlerFunction(selection) {
-   //drawStraightArrow(10,10,"#333333", selection);
-   //drawCurveArrow(10,10,"#333333", selection);
-   drawSnakeArrow(10,10,"#333333", selection);
+ function draw(actionName, selection){
+   console.log("draw", actionName);
+   let color = "#333333";
+   let x = 10;
+   let y = 10;
+   switch (actionName) {
+    case "straight":
+       drawStraightArrow(x, y, color, selection);
+       break;
+    case "curve":
+      drawCurveArrow(x, y, color, selection);
+      break;
+    case "snake":
+     drawSnakeArrow(x, y, color, selection);
+     default:
 
-
+   }
  }
 
  function drawStraightArrow(sx, sy, color, selection){
@@ -208,11 +199,8 @@
  }
 
  module.exports = {
-     /*commands: {
-         createRectangle: rectangleHandlerFunction
-     },*/
      panels: {
-       enlargeRectangle: {
+       flowkit: {
          show,
          update
        }
