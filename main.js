@@ -5,7 +5,7 @@
  */
 
 
- const {Path, Color} = require("scenegraph");
+ const {Path, Color, Ellipse, Rectangle} = require("scenegraph");
  const commands = require("commands");
  let panel;
 
@@ -36,19 +36,84 @@
     width: 24px; height: 24px;
     margin-right: 16px;
   }
+  .hide {
+    display: none;
+  }
+  .show{
+    display: block;
+  }
+  .row { align-items: center; }
+  div{
+    width: 100%;
+  }
+  .spread {
+        justify-content: space-between;
+        width: 100%;
+  }
+  input[type="range"]{
+    width: 100%;
+  }
+  .inlineBlock{
+    display: inlineBlock;
+  }
+
 </style>
-<a href="#" data-action="straight" class="actionButton">
-  <img src="assets/icon_straight.png" />
-  <span>直線の矢印</span>
-</a>
-<a href="#" data-action="curve" class="actionButton">
-  <img src="assets/icon_curve.png" />
-  <span>折れ線の矢印</span>
-</a>
-<a href="#" data-action="snake" class="actionButton">
-  <img src="assets/icon_snake.png" />
-  <span>鍵型の矢印</span>
-</a>
+<div id="toolPanel" class="show">
+  <a href="#" data-action="straight" class="actionButton">
+    <img src="assets/icon_straight.png" />
+    <span>直線</span>
+  </a>
+  <a href="#" data-action="curve" class="actionButton">
+    <img src="assets/icon_curve.png" />
+    <span>折れ線</span>
+  </a>
+  <a href="#" data-action="snake" class="actionButton">
+    <img src="assets/icon_snake.png" />
+    <span>鍵型</span>
+  </a>
+</div>
+<div id="propertyPanel" class="hide">
+  <label>
+    <div class="row spread">
+        <span>線の太さ</span>
+        <span>1</span>
+    </div>
+    <input type="range" min=0.5 max=5 value=1 />
+  </label>
+  <div>
+    <label class="inlineBlock">
+      <span>左端</span>
+      <select>
+           <option value="arrow1">矢印１</option>
+           <option value="arrow2">矢印２</option>
+           <option value="arrow3">矢印３</option>
+           <option value="circle1">円形１</option>
+           <option value="circle2">円形２</option>
+           <option value="square1">四角１</option>
+           <option value="square2">四角２</option>
+      </select>
+    </label>
+    <label class="inlineBlock">
+      <span>右端</span>
+      <select>
+           <option value="arrow1">矢印１</option>
+           <option value="arrow2">矢印２</option>
+           <option value="arrow3">矢印３</option>
+           <option value="circle1">円形１</option>
+           <option value="circle2">円形２</option>
+           <option value="square1">四角１</option>
+           <option value="square2">四角２</option>
+      </select>
+    </label>
+  </div>
+  <label>
+    <div class="row spread">
+        <span>ポイントの大きさ</span>
+        <span>50%</span>
+    </div>
+    <input type="range" min=0 max=100 value=50 />
+  </label>
+</div>
   `;
   function onActionButton(e){
     let actionName = e.currentTarget.getAttribute('data-action');
@@ -73,7 +138,16 @@
  }
 
  function update(selection) {
-   console.log("update",selection);
+   const toolPanel = document.querySelector("#toolPanel");
+   const propertyPanel = document.querySelector("#propertyPanel");
+   if(selection.items[0] && selection.items[0].pluginData == "flowKitConnector"){
+     toolPanel.className = "hide";
+     propertyPanel.className = "show";
+   }else{
+     toolPanel.className = "show";
+     propertyPanel.className = "hide";
+
+   }
  }
 
  function draw(actionName, selection){
@@ -83,7 +157,7 @@
      y: 10,
      width: 100,
      height: 100,
-     edgeType: "arrow1",
+     edgeType: "square1",
      lineType: actionName,
      lineWidth: 1,
      color: "#333333"
@@ -96,7 +170,7 @@
     y:Number,
     width:Number,
     height:Number,
-    edgeType:"none" or "arrow1" or "arrow2" or "arrow3" or "circle1" or "circle2" or "square1" or "square2",
+    edgeType:"none" or "arrow1" or "arrow2" or "arrow3" or "circle1" or "circle2" or "square1" or "square2" or "bar",
     lineType:"straight" or "curve" or "snake",
     lineWidth:Number,
     color:String
@@ -131,7 +205,6 @@
      edgeY = y + height;
    }
 
-
    const edge = createEdge({
      x: edgeX,
      y: edgeY,
@@ -145,6 +218,8 @@
    commands.group();
    let group = selection.items[0];
    group.name = "StraightArrow";
+   group.pluginData = "flowKitConnector";
+   return group;
  }
 
 
@@ -161,17 +236,20 @@
    let p0, p1, p2, p3;
    let pathData = "";
    switch(type){
+
      case "straight":
       p0 = sx + "," + sy;
       p1 = ex + "," + sy;
       pathData = `M ${p0} L ${p0} ${p1}`;
      break;
+
      case "curve":
       p0 = sx + "," + sy;
       p1 = sx + "," + ey;
       p2 = ex + "," + ey;
       pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
      break;
+
      case "snake":
       const mx = (ex - sx)/2 + sx;
       p0 = sx + "," + sy;
@@ -180,6 +258,7 @@
       p3 = ex + "," + ey;
       pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3}`;
      break;
+
    }
 
    const path = new Path();
@@ -189,8 +268,6 @@
    path.name = "line";
    return path;
  }
-
-
 
 
  function createEdge(parms, toRight){
@@ -206,64 +283,112 @@
    let pathData = "";
    let stroke;
    let fill;
+   let path;
 
    switch(type){
-     case "arrow1":
 
+     case "arrow1":
       if(toRight){
-        p0 = (x-15) + "," + (y-10);
-        p1 = x + "," + y;
-        p2 = (x-15) + "," + (y+10);
+        p0 = (-15) + "," + (-10);
+        p1 = "0,0";
+        p2 = (-15) + "," + (10);
       }else{
-        p0 = (x+15) + "," + (y-10);
-        p1 = x + "," + y;
-        p2 = (x+15) + "," + (y+10);
+        p0 = (15) + "," + (-10);
+        p1 = "0,0";
+        p2 = (15) + "," + (10);
       }
       pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
       stroke = new Color(color);
-
+      path = new Path();
+      path.pathData = pathData;
+      path.moveInParentCoordinates(x,y);
      break;
+
      case "arrow2":
-
        if(toRight){
-         p0 = (x-15) + "," + (y-8);
-         p1 = x + "," + y;
-         p2 = (x-15) + "," + (y+8);
+         p0 = (-15) + "," + (-8);
+         p1 = "0,0";
+         p2 = (-15) + "," + 8;
        }else{
-         p0 = (x+15) + "," + (y-8);
-         p1 = x + "," + y;
-         p2 = (x+15) + "," + (y+8);
+         p0 = 15 + "," + (-8);
+         p1 = "0,0";
+         p2 = 15 + "," + 8;
        }
-       pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p0}`;
+       pathData = `M ${p0} L ${p0} ${p1} ${p2} Z`;
        stroke = new Color(color);
        fill = new Color(color);
-
+       path = new Path();
+       path.pathData = pathData;
+       path.moveInParentCoordinates(x,y);
      break;
-     case "arrow3":
 
+     case "arrow3":
        if(toRight){
-         p0 = (x-15) + "," + (y-8);
-         p1 = x + "," + y;
-         p2 = (x-15) + "," + (y+8);
-         p3 = (x-12) + "," + y;
+         p0 = (-15) + "," + (-8);
+         p1 = "0,0";
+         p2 = (-15) + "," + (8);
+         p3 = (-12) + "," + (0);
        }else{
-         p0 = (x+15) + "," + (y-8);
-         p1 = x + "," + y;
-         p2 = (x+15) + "," + (y+8);
-         p3 = (x+12) + "," + y;
+         p0 = (15) + "," + (-8);
+         p1 = "0,0";
+         p2 = (15) + "," + (8);
+         p3 = (12) + "," + (0);
        }
-       pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} ${p0}`;
+       pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} Z`;
        stroke = new Color(color);
        fill = new Color(color);
+       path = new Path();
+       path.pathData = pathData;
+       path.moveInParentCoordinates(x,y);
+     break;
 
+     case "circle1":
+      stroke = new Color(color);
+      path = new Ellipse();
+      path.radiusX = 8;
+      path.radiusY = 8;
+      if(toRight){
+        path.moveInParentCoordinates(x,y-8);
+      }else{
+        path.moveInParentCoordinates(x-8,y-8);
+      }
+     break;
+
+     case "circle2":
+      stroke = new Color(color);
+      fill = new Color(color);
+      path = new Ellipse();
+      path.radiusX = 8;
+      path.radiusY = 8;
+      if(toRight){
+        path.moveInParentCoordinates(x,y-8);
+      }else{
+        path.moveInParentCoordinates(x-8,y-8);
+      }
+     break;
+
+     case "square1":
+      stroke = new Color(color);
+      path = new Rectangle();
+      path.width = 12;
+      path.height = 12;
+      if(toRight){
+        path.moveInParentCoordinates(x,y-6);
+      }else{
+        path.moveInParentCoordinates(x-6,y-6);
+      }
+     break;
+
+     case "square2":
+     break;
+
+     case "bar":
      break;
    }
 
-   const path = new Path();
    path.stroke = stroke;
    path.fill = fill;
    path.strokeWidth = lineWidth;
-   path.pathData = pathData;
    if(toRight){
      path.name = "rightEdge";
    }else{
@@ -271,7 +396,6 @@
    }
    return path;
  }
-
 
  module.exports = {
      panels: {
