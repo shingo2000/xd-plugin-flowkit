@@ -6,6 +6,7 @@
 
 
  const {Path, Color, Ellipse, Rectangle} = require("scenegraph");
+ const { editDocument } = require("application");
  const commands = require("commands");
  let panel;
 
@@ -79,11 +80,11 @@
 </div>
 <div id="propertyPanel" class="hide">
   <label>
-    <div class="row spread" id="lineWidth">
+    <div class="row spread">
         <span>線の太さ</span>
         <span>1</span>
     </div>
-    <input type="range" min=0.5 max=5 value=1 step=0.5 />
+    <input type="range" id="lineWidth" min=0.5 max=5 value=1 step=0.5 />
   </label>
   <div>
     <label class="inlineBlock">
@@ -114,29 +115,47 @@
     </label>
   </div>
   <label>
-    <div class="row spread" id="edgeScale">
+    <div class="row spread">
         <span>ポイントの大きさ</span>
         <span>100%</span>
     </div>
-    <input type="range" min=10 max=500 value=100 step=20 />
+    <input type="range" id="edgeScale" min=10 max=500 value=100 step=20 />
   </label>
 </div>
   `;
   function onActionButton(e){
     let actionName = e.currentTarget.getAttribute('data-action');
-    const { editDocument } = require("application");
-    editDocument({ editLabel: "Increase rectangle size" }, function(selection) {
+    editDocument({ editLabel: "draw" }, function(selection) {
       draw(actionName, selection);
     });
+  }
 
+  function onChangeProperty(e){
+    console.log("onChangeProperty");
+    const lineWidth = document.querySelector("#lineWidth").value;
+    const leftEdgeType = document.querySelector("#leftEdge").value;
+    const rightEdgeType = document.querySelector("#rightEdge").value;
+    const edgeScale = document.querySelector("#edgeScale").value;
+    console.log(lineWidth, leftEdgeType, rightEdgeType, edgeScale);
+
+    editDocument({ editLabel: "redraw" }, function(selection) {
+      redraw(null, selection);
+    });
   }
 
   panel = document.createElement("div");
   panel.innerHTML = html;
+
   let buttons = panel.querySelectorAll(".actionButton");
   for(let i = 0; i < buttons.length; i++){
     buttons[i].addEventListener("click", onActionButton);
   }
+
+  let inputs = panel.querySelectorAll("#propertyPanel input, #propertyPanel select");
+  for(let i = 0; i < inputs.length; i++){
+    inputs[i].addEventListener("change", onChangeProperty);
+  }
+
   return panel;
  }
 
@@ -156,9 +175,29 @@
    }
  }
 
+ function redraw(property,selection){
+
+   console.log("redraw",selection.items[0].children);
+   const line = selection.items[0].children.at(0);
+   console.log(line.localBounds);
+   /*
+   drawLineAndEdge({
+     x: line.localBounds.x,
+     y: line.localBounds.y,
+     width: line.localBounds.width,
+     height: line.localBounds.height,
+     leftEdgeType: "arrow1",
+     rightEdgeType: "square1",
+     lineType: "straight",
+     lineWidth: 1,
+     color: "#333333"
+   },selection);
+*/
+ }
+
  function draw(actionName, selection){
 
-   drawLineAndEdge({
+   selection.items = drawLineAndEdge({
      x: 10,
      y: 10,
      width: 100,
@@ -169,6 +208,12 @@
      lineWidth: 1,
      color: "#333333"
    },selection);
+
+   commands.group();
+   let group = selection.items[0];
+   group.name = "StraightArrow";
+   group.pluginData = "flowKitConnector";
+   return group;
  }
 
  /*
@@ -239,15 +284,8 @@
    }, true);
    selection.insertionParent.addChild(rightEdge);
 
-   // create Group
-   selection.items = [line, leftEdge, rightEdge];
-   commands.group();
-   let group = selection.items[0];
+   return [line, leftEdge, rightEdge];
 
-   // naming
-   group.name = "StraightArrow";
-   group.pluginData = "flowKitConnector";
-   return group;
  }
 
 
