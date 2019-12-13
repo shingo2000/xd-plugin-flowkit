@@ -9,6 +9,11 @@
  const commands = require("commands");
  let panel;
 
+ let rightEdgeType = "none";
+ let leftEdgeType = "arrow3";
+ let lineWidth = "2";
+ let color = "#707070";
+
  function create() {
    console.log("create");
    const html = `
@@ -69,21 +74,22 @@
   </a>
   <a href="#" data-action="snake" class="actionButton">
     <img src="assets/icon_snake.png" />
-    <span>鍵型</span>
+    <span>カギ線</span>
   </a>
 </div>
 <div id="propertyPanel" class="hide">
   <label>
-    <div class="row spread">
+    <div class="row spread" id="lineWidth">
         <span>線の太さ</span>
         <span>1</span>
     </div>
-    <input type="range" min=0.5 max=5 value=1 />
+    <input type="range" min=0.5 max=5 value=1 step=0.5 />
   </label>
   <div>
     <label class="inlineBlock">
       <span>左端</span>
-      <select>
+      <select id="leftEdge">
+           <option value="none">なし</option>
            <option value="arrow1">矢印１</option>
            <option value="arrow2">矢印２</option>
            <option value="arrow3">矢印３</option>
@@ -95,7 +101,8 @@
     </label>
     <label class="inlineBlock">
       <span>右端</span>
-      <select>
+      <select id="rightEdge">
+           <option value="none">なし</option>
            <option value="arrow1">矢印１</option>
            <option value="arrow2">矢印２</option>
            <option value="arrow3">矢印３</option>
@@ -107,11 +114,11 @@
     </label>
   </div>
   <label>
-    <div class="row spread">
+    <div class="row spread" id="edgeScale">
         <span>ポイントの大きさ</span>
-        <span>50%</span>
+        <span>100%</span>
     </div>
-    <input type="range" min=0 max=100 value=50 />
+    <input type="range" min=10 max=500 value=100 step=20 />
   </label>
 </div>
   `;
@@ -146,7 +153,6 @@
    }else{
      toolPanel.className = "show";
      propertyPanel.className = "hide";
-
    }
  }
 
@@ -157,7 +163,8 @@
      y: 10,
      width: 100,
      height: 100,
-     edgeType: "square1",
+     leftEdgeType: "arrow1",
+     rightEdgeType: "square1",
      lineType: actionName,
      lineWidth: 1,
      color: "#333333"
@@ -170,7 +177,8 @@
     y:Number,
     width:Number,
     height:Number,
-    edgeType:"none" or "arrow1" or "arrow2" or "arrow3" or "circle1" or "circle2" or "square1" or "square2" or "bar",
+    leftEdgeType:"none" or "arrow1" or "arrow2" or "arrow3" or "circle1" or "circle2" or "square1" or "square2" or "bar",
+    rightEdgeType:
     lineType:"straight" or "curve" or "snake",
     lineWidth:Number,
     color:String
@@ -183,7 +191,8 @@
    const y = parms.y;
    const width = parms.width;
    const height = parms.height;
-   const edgeType = parms.edgeType;
+   const leftEdgeType = parms.leftEdgeType;
+   const rightEdgeType = parms.rightEdgeType;
    const lineType = parms.lineType;
    const lineWidth = parms.lineWidth;
    const color = parms.color;
@@ -199,24 +208,43 @@
    });
    selection.insertionParent.addChild(line);
 
-   let edgeX = x + width;
+   // create leftEdge
+   let edgeX = x;
    let edgeY = y;
+   const leftEdge = createEdge({
+     x: edgeX,
+     y: edgeY,
+     type: leftEdgeType,
+     lineWidth: lineWidth,
+     color: color
+   }, false);
+   if(lineType == "curve"){
+     leftEdge.rotateAround(90, {x:0, y:0})
+   }
+   selection.insertionParent.addChild(leftEdge);
+
+
+   // create RightEdge
+   edgeX = x + width;
+   edgeY = y;
    if(lineType == "curve" || lineType == "snake"){
      edgeY = y + height;
    }
-
-   const edge = createEdge({
+   const rightEdge = createEdge({
      x: edgeX,
      y: edgeY,
-     type: edgeType,
+     type: rightEdgeType,
      lineWidth: lineWidth,
      color: color
    }, true);
-   selection.insertionParent.addChild(edge);
+   selection.insertionParent.addChild(rightEdge);
 
-   selection.items = [line, edge];
+   // create Group
+   selection.items = [line, leftEdge, rightEdge];
    commands.group();
    let group = selection.items[0];
+
+   // naming
    group.name = "StraightArrow";
    group.pluginData = "flowKitConnector";
    return group;
@@ -270,7 +298,7 @@
  }
 
 
- function createEdge(parms, toRight){
+ function createEdge(parms, isRight){
 
    console.log("createEdge", parms);
    const x = parms.x;
@@ -288,7 +316,7 @@
    switch(type){
 
      case "arrow1":
-      if(toRight){
+      if(isRight){
         p0 = (-15) + "," + (-10);
         p1 = "0,0";
         p2 = (-15) + "," + (10);
@@ -305,7 +333,7 @@
      break;
 
      case "arrow2":
-       if(toRight){
+       if(isRight){
          p0 = (-15) + "," + (-8);
          p1 = "0,0";
          p2 = (-15) + "," + 8;
@@ -323,7 +351,7 @@
      break;
 
      case "arrow3":
-       if(toRight){
+       if(isRight){
          p0 = (-15) + "," + (-8);
          p1 = "0,0";
          p2 = (-15) + "," + (8);
@@ -347,7 +375,7 @@
       path = new Ellipse();
       path.radiusX = 8;
       path.radiusY = 8;
-      if(toRight){
+      if(isRight){
         path.moveInParentCoordinates(x,y-8);
       }else{
         path.moveInParentCoordinates(x-8,y-8);
@@ -360,7 +388,7 @@
       path = new Ellipse();
       path.radiusX = 8;
       path.radiusY = 8;
-      if(toRight){
+      if(isRight){
         path.moveInParentCoordinates(x,y-8);
       }else{
         path.moveInParentCoordinates(x-8,y-8);
@@ -372,7 +400,7 @@
       path = new Rectangle();
       path.width = 12;
       path.height = 12;
-      if(toRight){
+      if(isRight){
         path.moveInParentCoordinates(x,y-6);
       }else{
         path.moveInParentCoordinates(x-6,y-6);
@@ -380,16 +408,29 @@
      break;
 
      case "square2":
+      stroke = new Color(color);
+      fill = new Color(color);
+      path = new Rectangle();
+      path.width = 12;
+      path.height = 12;
+      if(isRight){
+        path.moveInParentCoordinates(x,y-6);
+      }else{
+        path.moveInParentCoordinates(x-6,y-6);
+      }
      break;
 
      case "bar":
+     break;
+
+     case "none":
      break;
    }
 
    path.stroke = stroke;
    path.fill = fill;
    path.strokeWidth = lineWidth;
-   if(toRight){
+   if(isRight){
      path.name = "rightEdge";
    }else{
      path.name = "leftEdge";
