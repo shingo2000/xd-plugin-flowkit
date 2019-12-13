@@ -9,11 +9,13 @@
  const { editDocument } = require("application");
  const commands = require("commands");
  let panel;
-
- let rightEdgeType = "none";
- let leftEdgeType = "arrow3";
- let lineWidth = "2";
- let color = "#707070";
+ const settingData = {
+   leftEdgeType: "none",
+   rightEdgeType: "arrow3",
+   lineWidth: 1,
+   color: "#333333",
+   lineType: "straignt"
+ }
 
  function create() {
    console.log("create");
@@ -122,6 +124,7 @@
     <input type="range" id="edgeScale" min=10 max=500 value=100 step=20 />
   </label>
   <input type="hidden" id="lineType" value="straight" />
+  <input type="hidden" id="color" value="#cc0000" />
 </div>
   `;
   function onActionButton(e){
@@ -138,10 +141,18 @@
     const rightEdgeType = document.querySelector("#rightEdge").value;
     const edgeScale = document.querySelector("#edgeScale").value;
     const lineType = document.querySelector("#lineType").value;
+    const color = document.querySelector("#color").value;
     console.log(lineWidth, leftEdgeType, rightEdgeType, edgeScale);
 
     editDocument({ editLabel: "redraw" }, function(selection) {
-      redraw(null, selection);
+      redraw({
+        lineWidth: lineWidth,
+        leftEdgeType: leftEdgeType,
+        rightEdgeType: rightEdgeType,
+        lineType: lineType,
+        color: color
+
+      }, selection);
     });
   }
 
@@ -168,8 +179,8 @@
  function update(selection) {
    const toolPanel = document.querySelector("#toolPanel");
    const propertyPanel = document.querySelector("#propertyPanel");
-   if(selection.items[0] && selection.items[0].pluginData == "flowKitConnector"){
-     updateToolPanel(selection.items[0]);
+   if(selection.items[0] && selection.items[0].pluginData &&selection.items[0].pluginData.name == "flowKitConnector"){
+     updateToolPanel(selection.items[0].pluginData);
      toolPanel.className = "hide";
      propertyPanel.className = "show";
    }else{
@@ -177,47 +188,74 @@
      propertyPanel.className = "hide";
    }
  }
- function updateToolPanel(group){
+ /*
+ function resetToolPanel(){
+   panel.querySelector("#propertyPanel #lineWidth").value = settingData.lineWidth;
+   panel.querySelector("#propertyPanel #leftEdge").value = settingData.leftEdgeType;
+   panel.querySelector("#propertyPanel #rightEdge").value = settingdata.rightEdgeType;
+   panel.querySelector("#propertyPanel #lineType").value = settingdata.lineType;
+   panel.querySelector("#propertyPanel #color").value = settingdata.color;
+ }*/
+ function updateToolPanel(parms){
+   console.log("updateToolPanel",parms)
+   panel.querySelector("#propertyPanel #lineWidth").value = parms.lineWidth;
+   panel.querySelector("#propertyPanel #leftEdge").value = parms.leftEdgeType;
+   panel.querySelector("#propertyPanel #rightEdge").value = parms.rightEdgeType;
+   panel.querySelector("#propertyPanel #lineType").value = parms.lineType;
+   panel.querySelector("#propertyPanel #color").value = parms.color;
 
  }
 
- function redraw(property,selection){
+ function redraw(parms,selection){
 
-   console.log("redraw",selection);
-   const line = selection.items[0].children.at(0);
-   const leftEdge = selection.items[0].children.at(1);
-   const rightEdge = selection.items[0].children.at(2);
+   console.log("redraw",parms);
+   const group = selection.items[0];
+   const line = group.children.at(0);
+   const leftEdge = group.children.at(1);
+   const rightEdge = group.children.at(2);
 
    const items = drawLineAndEdge({
      x: line.localBounds.x,
      y: line.localBounds.y,
      width: line.localBounds.width,
      height: line.localBounds.height,
-     leftEdgeType: "arrow1",
-     rightEdgeType: "circle1",
-     lineType: line.pluginData,
-     lineWidth: 1,
-     color: "#ff0000"
+     leftEdgeType: parms.leftEdgeType,
+     rightEdgeType: parms.rightEdgeType,
+     lineType: parms.lineType,
+     lineWidth: parms.lineWidth,
+     color: parms.color
    },selection);
 
+   line.removeFromParent();
+   leftEdge.removeFromParent();
+   rightEdge.removeFromParent();
+
    for(let i = 0; i < items.length; i++){
-     selection.items[0].addChild(items[i]);
+     group.addChild(items[i]);
+   }
+   group.pluginData = {
+     name: "flowKitConnector",
+     leftEdgeType: parms.leftEdgeType,
+     rightEdgeType: parms.rightEdgeType,
+     lineType: parms.lineType,
+     lineWidth: parms.lineWidth,
+     color: parms.color
    }
  }
 
  function draw(actionName, selection){
-   console.log("draw",selection);
+   console.log("draw",actionName,settingData);
 
    const items = drawLineAndEdge({
-     x: 10,
-     y: 10,
+     x: 0,
+     y: 0,
      width: 100,
      height: 100,
-     leftEdgeType: "arrow1",
-     rightEdgeType: "square1",
+     leftEdgeType: settingData.leftEdgeType,
+     rightEdgeType: settingData.rightEdgeType,
      lineType: actionName,
-     lineWidth: 1,
-     color: "#333333"
+     lineWidth: settingData.lineWidth,
+     color: settingData.color
    },selection);
 
    for(let i = 0; i < items.length; i++){
@@ -228,7 +266,15 @@
 
    let group = selection.items[0];
    group.name = "flowKitConnector";
-   group.pluginData = "flowKitConnector";
+   group.pluginData = {
+     name: "flowKitConnector",
+     leftEdgeType: settingData.leftEdgeType,
+     rightEdgeType: settingData.rightEdgeType,
+     lineType: actionName,
+     lineWidth: settingData.lineWidth,
+     color: settingData.color
+   }
+
    return group;
 
  }
@@ -345,7 +391,6 @@
    path.strokeWidth = lineWidth;
    path.pathData = pathData;
    path.name = "line";
-   path.pluginData = type;
    return path;
  }
 
@@ -476,9 +521,11 @@
      break;
 
      case "none":
+
+      path = new Path();
      break;
    }
-
+   console.log(stroke,fill,lineWidth);
    path.stroke = stroke;
    path.fill = fill;
    path.strokeWidth = lineWidth;
@@ -487,7 +534,6 @@
    }else{
      path.name = "leftEdge";
    }
-   path.pluginData = type;
 
    return path;
  }
