@@ -121,6 +121,7 @@
     </div>
     <input type="range" id="edgeScale" min=10 max=500 value=100 step=20 />
   </label>
+  <input type="hidden" id="lineType" value="straight" />
 </div>
   `;
   function onActionButton(e){
@@ -136,6 +137,7 @@
     const leftEdgeType = document.querySelector("#leftEdge").value;
     const rightEdgeType = document.querySelector("#rightEdge").value;
     const edgeScale = document.querySelector("#edgeScale").value;
+    const lineType = document.querySelector("#lineType").value;
     console.log(lineWidth, leftEdgeType, rightEdgeType, edgeScale);
 
     editDocument({ editLabel: "redraw" }, function(selection) {
@@ -167,6 +169,7 @@
    const toolPanel = document.querySelector("#toolPanel");
    const propertyPanel = document.querySelector("#propertyPanel");
    if(selection.items[0] && selection.items[0].pluginData == "flowKitConnector"){
+     updateToolPanel(selection.items[0]);
      toolPanel.className = "hide";
      propertyPanel.className = "show";
    }else{
@@ -174,30 +177,38 @@
      propertyPanel.className = "hide";
    }
  }
+ function updateToolPanel(group){
+
+ }
 
  function redraw(property,selection){
 
-   console.log("redraw",selection.items[0].children);
+   console.log("redraw",selection);
    const line = selection.items[0].children.at(0);
-   console.log(line.localBounds);
-   /*
-   drawLineAndEdge({
+   const leftEdge = selection.items[0].children.at(1);
+   const rightEdge = selection.items[0].children.at(2);
+
+   const items = drawLineAndEdge({
      x: line.localBounds.x,
      y: line.localBounds.y,
      width: line.localBounds.width,
      height: line.localBounds.height,
      leftEdgeType: "arrow1",
-     rightEdgeType: "square1",
-     lineType: "straight",
+     rightEdgeType: "circle1",
+     lineType: line.pluginData,
      lineWidth: 1,
-     color: "#333333"
+     color: "#ff0000"
    },selection);
-*/
+
+   for(let i = 0; i < items.length; i++){
+     selection.items[0].addChild(items[i]);
+   }
  }
 
  function draw(actionName, selection){
+   console.log("draw",selection);
 
-   selection.items = drawLineAndEdge({
+   const items = drawLineAndEdge({
      x: 10,
      y: 10,
      width: 100,
@@ -209,11 +220,17 @@
      color: "#333333"
    },selection);
 
+   for(let i = 0; i < items.length; i++){
+     selection.insertionParent.addChild(items[i]);
+   }
+   selection.items = items;
    commands.group();
+
    let group = selection.items[0];
-   group.name = "StraightArrow";
+   group.name = "flowKitConnector";
    group.pluginData = "flowKitConnector";
    return group;
+
  }
 
  /*
@@ -251,7 +268,6 @@
      lineWidth: lineWidth,
      color: color
    });
-   selection.insertionParent.addChild(line);
 
    // create leftEdge
    let edgeX = x;
@@ -266,8 +282,6 @@
    if(lineType == "curve"){
      leftEdge.rotateAround(90, {x:0, y:0})
    }
-   selection.insertionParent.addChild(leftEdge);
-
 
    // create RightEdge
    edgeX = x + width;
@@ -282,7 +296,6 @@
      lineWidth: lineWidth,
      color: color
    }, true);
-   selection.insertionParent.addChild(rightEdge);
 
    return [line, leftEdge, rightEdge];
 
@@ -290,7 +303,7 @@
 
 
  function createLine(parms){
-   console.log("createLine", parms);
+   //console.log("createLine", parms);
    const sx = parms.sx;
    const sy = parms.sy;
    const ex = parms.ex;
@@ -332,13 +345,14 @@
    path.strokeWidth = lineWidth;
    path.pathData = pathData;
    path.name = "line";
+   path.pluginData = type;
    return path;
  }
 
 
  function createEdge(parms, isRight){
 
-   console.log("createEdge", parms);
+   //console.log("createEdge", parms);
    const x = parms.x;
    const y = parms.y;
    const type = parms.type;
@@ -473,6 +487,8 @@
    }else{
      path.name = "leftEdge";
    }
+   path.pluginData = type;
+
    return path;
  }
 
