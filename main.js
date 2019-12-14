@@ -159,12 +159,12 @@
   panel = document.createElement("div");
   panel.innerHTML = html;
 
-  let buttons = panel.querySelectorAll(".actionButton");
+  const buttons = panel.querySelectorAll(".actionButton");
   for(let i = 0; i < buttons.length; i++){
     buttons[i].addEventListener("click", onActionButton);
   }
 
-  let inputs = panel.querySelectorAll("#propertyPanel input, #propertyPanel select");
+  const inputs = panel.querySelectorAll("#propertyPanel input, #propertyPanel select");
   for(let i = 0; i < inputs.length; i++){
     inputs[i].addEventListener("change", onChangeProperty);
   }
@@ -247,8 +247,8 @@
    console.log("draw",actionName,settingData);
 
    const items = drawLineAndEdge({
-     x: 0,
-     y: 0,
+     x: 10,
+     y: 10,
      width: 100,
      height: 100,
      leftEdgeType: settingData.leftEdgeType,
@@ -264,7 +264,7 @@
    selection.items = items;
    commands.group();
 
-   let group = selection.items[0];
+   const group = selection.items[0];
    group.name = "flowKitConnector";
    group.pluginData = {
      name: "flowKitConnector",
@@ -475,7 +475,7 @@
       if(isRight){
         path.moveInParentCoordinates(x,y-8);
       }else{
-        path.moveInParentCoordinates(x-8,y-8);
+        path.moveInParentCoordinates(x-16,y-8);
       }
      break;
 
@@ -488,19 +488,19 @@
       if(isRight){
         path.moveInParentCoordinates(x,y-8);
       }else{
-        path.moveInParentCoordinates(x-8,y-8);
+        path.moveInParentCoordinates(x-16,y-8);
       }
      break;
 
      case "square1":
       stroke = new Color(color);
       path = new Rectangle();
-      path.width = 12;
-      path.height = 12;
+      path.width = 16;
+      path.height = 16;
       if(isRight){
-        path.moveInParentCoordinates(x,y-6);
+        path.moveInParentCoordinates(x,y-8);
       }else{
-        path.moveInParentCoordinates(x-6,y-6);
+        path.moveInParentCoordinates(x-16,y-8);
       }
      break;
 
@@ -508,12 +508,12 @@
       stroke = new Color(color);
       fill = new Color(color);
       path = new Rectangle();
-      path.width = 12;
-      path.height = 12;
+      path.width = 16;
+      path.height = 16;
       if(isRight){
-        path.moveInParentCoordinates(x,y-6);
+        path.moveInParentCoordinates(x,y-8);
       }else{
-        path.moveInParentCoordinates(x-6,y-6);
+        path.moveInParentCoordinates(x-16,y-8);
       }
      break;
 
