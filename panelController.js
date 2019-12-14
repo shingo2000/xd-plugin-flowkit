@@ -69,7 +69,7 @@ function create(onActionButton, onChangeProperty) {
  <label>
    <div class="row spread">
        <span>線の太さ</span>
-       <span>1</span>
+       <span class="lineWidthValue">1</span>
    </div>
    <input type="range" id="lineWidth" min=0.5 max=5 value=1 step=0.5 />
  </label>
@@ -104,9 +104,9 @@ function create(onActionButton, onChangeProperty) {
  <label>
    <div class="row spread">
        <span>ポイントの大きさ</span>
-       <span>100%</span>
+       <span class="edgeScaleValue">100%<span>
    </div>
-   <input type="range" id="edgeScale" min=10 max=500 value=100 step=20 />
+   <input type="range" id="edgeScale" min=0 max=500 value=100 step=25 />
  </label>
  <input type="hidden" id="lineType" value="straight" />
  <input type="hidden" id="color" value="#cc0000" />
@@ -122,6 +122,10 @@ function create(onActionButton, onChangeProperty) {
   for(let i = 0; i < inputs.length; i++){
     inputs[i].addEventListener("change", _onChangeProperty);
   }
+  const sliders = panel.querySelectorAll("#edgeScale, #lineWidth");
+  for(let i = 0; i < sliders.length; i++){
+    sliders[i].addEventListener("input", _onInputSlider);
+  }
   function _onChangeProperty(e){
     onChangeProperty({
       lineWidth: document.querySelector("#lineWidth").value,
@@ -133,8 +137,19 @@ function create(onActionButton, onChangeProperty) {
     });
   }
   function _onActionButton(e){
-    let actionName = e.currentTarget.getAttribute('data-action');
+    const actionName = e.currentTarget.getAttribute('data-action');
     onActionButton(actionName);
+  }
+  function _onInputSlider(e){
+    const input = e.currentTarget;
+    let label;
+    if(input.id == "lineWidth"){
+      label = input.parentNode.querySelector(".lineWidthValue");
+      label.innerHTML = input.value + "";
+    }else if(input.id == "edgeScale"){
+      label = input.parentNode.querySelector(".edgeScaleValue");
+      label.innerHTML = input.value + "%";
+    }
   }
   return panel;
 }
@@ -166,6 +181,9 @@ function updateToolPanel(parms){
   panel.querySelector("#propertyPanel #rightEdge").value = parms.rightEdgeType;
   panel.querySelector("#propertyPanel #lineType").value = parms.lineType;
   panel.querySelector("#propertyPanel #color").value = parms.color;
+  panel.querySelector("#propertyPanel #edgeScale").value = parms.edgeScale;
+  panel.querySelector("#propertyPanel .lineWidthValue").innerHTML = parms.lineWidth + "";
+  panel.querySelector("#propertyPanel .edgeScaleValue").innerHTML = parms.lineWidth + "%";
 
 }
 
