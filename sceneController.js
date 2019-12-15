@@ -24,6 +24,7 @@ function drawConnector(parms, selection){
  const height = parms.height;
  const leftEdgeType = parms.leftEdgeType;
  const rightEdgeType = parms.rightEdgeType;
+ const edgeScale = parms.edgeScale;
  const lineType = parms.lineType;
  const lineWidth = parms.lineWidth;
  const color = parms.color;
@@ -46,6 +47,7 @@ function drawConnector(parms, selection){
    y: edgeY,
    type: leftEdgeType,
    lineWidth: lineWidth,
+   scale: edgeScale,
    color: color
  }, false);
  if(lineType == "curve"){
@@ -63,6 +65,7 @@ function drawConnector(parms, selection){
    y: edgeY,
    type: rightEdgeType,
    lineWidth: lineWidth,
+   scale: edgeScale,
    color: color
  }, true);
 
@@ -126,6 +129,7 @@ function createEdge(parms, isRight){
  const type = parms.type;
  const lineWidth = parms.lineWidth;
  const color = parms.color;
+ const scale = parms.scale/100;
 
  let p0,p1,p2,p3;
  let pathData = "";
@@ -137,13 +141,13 @@ function createEdge(parms, isRight){
 
    case "arrow1":
     if(isRight){
-      p0 = (-15) + "," + (-10);
+      p0 = (-15*scale) + "," + (-10*scale);
       p1 = "0,0";
-      p2 = (-15) + "," + (10);
+      p2 = (-15*scale) + "," + (10*scale);
     }else{
-      p0 = (15) + "," + (-10);
+      p0 = (15*scale) + "," + (-10*scale);
       p1 = "0,0";
-      p2 = (15) + "," + (10);
+      p2 = (15*scale) + "," + (10*scale);
     }
     pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
     stroke = new Color(color);
@@ -154,13 +158,13 @@ function createEdge(parms, isRight){
 
    case "arrow2":
      if(isRight){
-       p0 = (-15) + "," + (-8);
+       p0 = (-15*scale) + "," + (-8*scale);
        p1 = "0,0";
-       p2 = (-15) + "," + 8;
+       p2 = (-15*scale) + "," + (8*scale);
      }else{
-       p0 = 15 + "," + (-8);
+       p0 = (15*scale) + "," + (-8*scale);
        p1 = "0,0";
-       p2 = 15 + "," + 8;
+       p2 = (15*scale) + "," + (8*scale);
      }
      pathData = `M ${p0} L ${p0} ${p1} ${p2} Z`;
      stroke = new Color(color);
@@ -172,15 +176,15 @@ function createEdge(parms, isRight){
 
    case "arrow3":
      if(isRight){
-       p0 = (-15) + "," + (-8);
+       p0 = (-15*scale) + "," + (-8*scale);
        p1 = "0,0";
-       p2 = (-15) + "," + (8);
-       p3 = (-12) + "," + (0);
+       p2 = (-15*scale) + "," + (8*scale);
+       p3 = (-12*scale) + ",0";
      }else{
-       p0 = (15) + "," + (-8);
+       p0 = (15*scale) + "," + (-8*scale);
        p1 = "0,0";
-       p2 = (15) + "," + (8);
-       p3 = (12) + "," + (0);
+       p2 = (15*scale) + "," + (8*scale);
+       p3 = (12*scale) + ",0";
      }
      pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} Z`;
      stroke = new Color(color);
@@ -193,12 +197,12 @@ function createEdge(parms, isRight){
    case "circle1":
     stroke = new Color(color);
     path = new Ellipse();
-    path.radiusX = 8;
-    path.radiusY = 8;
+    path.radiusX = 8*scale;
+    path.radiusY = 8*scale;
     if(isRight){
-      path.moveInParentCoordinates(x,y-8);
+      path.moveInParentCoordinates(x, y-8*scale);
     }else{
-      path.moveInParentCoordinates(x-16,y-8);
+      path.moveInParentCoordinates(x-16*scale, y-8*scale);
     }
    break;
 
@@ -206,24 +210,24 @@ function createEdge(parms, isRight){
     stroke = new Color(color);
     fill = new Color(color);
     path = new Ellipse();
-    path.radiusX = 8;
-    path.radiusY = 8;
+    path.radiusX = 8*scale;
+    path.radiusY = 8*scale;
     if(isRight){
-      path.moveInParentCoordinates(x,y-8);
+      path.moveInParentCoordinates(x, y-8*scale);
     }else{
-      path.moveInParentCoordinates(x-16,y-8);
+      path.moveInParentCoordinates(x-16*scale, y-8*scale);
     }
    break;
 
    case "square1":
     stroke = new Color(color);
     path = new Rectangle();
-    path.width = 16;
-    path.height = 16;
+    path.width = 16*scale;
+    path.height = 16*scale;
     if(isRight){
-      path.moveInParentCoordinates(x,y-8);
+      path.moveInParentCoordinates(x, y-8*scale);
     }else{
-      path.moveInParentCoordinates(x-16,y-8);
+      path.moveInParentCoordinates(x-16*scale, y-8*scale);
     }
    break;
 
@@ -231,12 +235,12 @@ function createEdge(parms, isRight){
     stroke = new Color(color);
     fill = new Color(color);
     path = new Rectangle();
-    path.width = 16;
-    path.height = 16;
+    path.width = 16*scale;
+    path.height = 16*scale;
     if(isRight){
-      path.moveInParentCoordinates(x,y-8);
+      path.moveInParentCoordinates(x, y-8*scale);
     }else{
-      path.moveInParentCoordinates(x-16,y-8);
+      path.moveInParentCoordinates(x-16*scale, y-8*scale);
     }
    break;
 
