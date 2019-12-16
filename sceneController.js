@@ -75,7 +75,6 @@ function drawConnector(parms, selection){
 
 
 function createLine(parms){
- //console.log("createLine", parms);
  const sx = parms.sx;
  const sy = parms.sy;
  const ex = parms.ex;
@@ -123,7 +122,7 @@ function createLine(parms){
 
 function createEdge(parms, isRight){
 
- //console.log("createEdge", parms);
+ console.log("createEdge", parms);
  const x = parms.x;
  const y = parms.y;
  const type = parms.type;
@@ -252,9 +251,8 @@ function createEdge(parms, isRight){
     path = new Path();
    break;
  }
- console.log(stroke,fill,lineWidth);
- path.stroke = stroke;
- path.fill = fill;
+ path.stroke = new Color(color);
+ path.fill = new Color(color);
  path.strokeWidth = lineWidth;
  if(isRight){
    path.name = "rightEdge";

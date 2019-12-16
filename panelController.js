@@ -110,7 +110,7 @@ function create(onActionButton, onChangeProperty) {
      <label class="inlineBlock">
        <span>左端</span>
        <select id="leftEdge">
-            <option value="none">なし</option>
+            <option value="none" selected>なし</option>
             <option value="arrow1">矢印１</option>
             <option value="arrow2">矢印２</option>
             <option value="arrow3">矢印３</option>
@@ -126,7 +126,7 @@ function create(onActionButton, onChangeProperty) {
             <option value="none">なし</option>
             <option value="arrow1">矢印１</option>
             <option value="arrow2">矢印２</option>
-            <option value="arrow3">矢印３</option>
+            <option value="arrow3" selected>矢印３</option>
             <option value="circle1">円形１</option>
             <option value="circle2">円形２</option>
             <option value="square1">四角１</option>
@@ -136,7 +136,7 @@ function create(onActionButton, onChangeProperty) {
    </div>
    <label>
     <span>着色</span>
-    <input type="text" id="color" value="#cc0000" />
+    <input type="text" id="color" value="#666666" />
    </label>
    <input type="hidden" id="lineType" value="straight" style="display:none" />
  </div>
@@ -215,11 +215,12 @@ function updateToolPanel(parms){
 
 }
 function getParms(){
+  console.log("getParms", document.querySelector("#leftEdge").value, document.querySelector("#rightEdge").value)
   return {
-    lineWidth: document.querySelector("#lineWidth").value,
+    lineWidth: document.querySelector("#lineWidth").value - 0,
     leftEdgeType: document.querySelector("#leftEdge").value,
     rightEdgeType: document.querySelector("#rightEdge").value,
-    edgeScale: document.querySelector("#edgeScale").value,
+    edgeScale: document.querySelector("#edgeScale").value - 0,
     lineType: document.querySelector("#lineType").value,
     color: document.querySelector("#color").value
   };
