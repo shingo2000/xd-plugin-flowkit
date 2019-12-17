@@ -104,7 +104,7 @@ function create(onActionButton, onChangeProperty) {
          <span>ポイントの大きさ</span>
          <span class="edgeScaleValue">100%<span>
      </div>
-     <input type="range" id="edgeScale" min=0 max=500 value=100 step=25 />
+     <input type="range" id="edgeScale" min=0 max=200 value=100 step=25 />
    </label>
    <div>
      <label class="inlineBlock">
@@ -217,7 +217,7 @@ function updateToolPanel(parms){
 
 }
 function getParms(){
-  console.log("getParms", document.querySelector("#leftEdge").value, document.querySelector("#rightEdge").value)
+  //console.log("getParms", document.querySelector("#leftEdge").value, document.querySelector("#rightEdge").value)
   return {
     lineWidth: document.querySelector("#lineWidth").value - 0,
     leftEdgeType: document.querySelector("#leftEdge").value,

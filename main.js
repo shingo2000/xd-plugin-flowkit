@@ -7,6 +7,7 @@
 
  const { editDocument } = require("application");
  const commands = require("commands");
+ const {Artboard, SceneNode} = require("scenegraph");
  const sceneController = require("./sceneController.js");
  const panelController = require("./panelController.js");
 
@@ -26,7 +27,7 @@
  }
 
  function update(selection) {
-   console.log("update",selection.items[0]);
+   //console.log("update",selection.items[0]);
    if(selection.items[0] && selection.items[0].pluginData && selection.items[0].pluginData.name == "flowKitConnector"){
      panelController.showPropertyPanel(selection.items[0].pluginData);
    }else{
@@ -76,13 +77,75 @@
  function draw(actionName, selection){
    console.log("draw",actionName);
 
+   let x = 10;
+   let y = 10;
+   let width = 100;
+   let height = 100;
+
+   if(selection.items[0]){
+     if(selection.items[0] instanceof Artboard){
+       x = 10;
+       y = 10;
+     }else{
+      if(selection.items.length == 2){
+        // ２つ選択したオブジェクトの間を繋ぐ線を引く
+        let x0 = selection.items[0].translation.x;
+        let y0 = selection.items[0].translation.y;
+        let x1 = selection.items[1].translation.x;
+        let y1 = selection.items[1].translation.y;
+
+        if(actionName == "curve"){
+          if(x0 < x1){
+            x = x0 + selection.items[0].localBounds.width/2;
+            y = y0 + selection.items[0].localBounds.height;
+            width = x1 - x;
+            height = (y1 + selection.items[1].localBounds.height/2) - y;
+          }else{
+            x = x1 + selection.items[1].localBounds.width/2;
+            y = y1 + selection.items[1].localBounds.height;
+            width = x0 - x;
+            height = (y0 + selection.items[0].localBounds.height/2) - y;
+          }
+
+        }else{
+          if(x0 < x1){
+            x = x0 + selection.items[0].localBounds.width;
+            y = y0 + selection.items[0].localBounds.height/2;
+            width = x1 - x;
+            height = (y1 + selection.items[1].localBounds.height/2) - y;
+          }else{
+            x = x1 + selection.items[1].localBounds.width;
+            y = y1 + selection.items[1].localBounds.height/2;
+            width = x0 - x;
+            height = (y0 + selection.items[0].localBounds.height/2) - y;
+          }
+        }
+
+      }else{
+        if(actionName == "curve"){
+          x = selection.items[0].translation.x + selection.items[0].localBounds.width/2;
+          y = selection.items[0].translation.y + selection.items[0].localBounds.height;
+        }else{
+          x = selection.items[0].translation.x + selection.items[0].localBounds.width;
+          y = selection.items[0].translation.y + selection.items[0].localBounds.height / 2;
+        }
+      }
+     }
+   } else {
+
+     console.log("else");
+     // viewportの中心に配置
+
+   }
+
+
    const parms = panelController.getParms();
 
    const items = sceneController.drawConnector({
-     x: 10,
-     y: 10,
-     width: 100,
-     height: 100,
+     x: x,
+     y: y,
+     width: width,
+     height: height,
      leftEdgeType: parms.leftEdgeType,
      rightEdgeType: parms.rightEdgeType,
      edgeScale: parms.edgeScale,

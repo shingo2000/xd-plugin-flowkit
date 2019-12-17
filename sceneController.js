@@ -67,10 +67,10 @@ function drawConnector(parms, selection){
  let leftOffset = 0;
  let rightOffset = 0;
  if(leftEdgeType == "circle1" || leftEdgeType == "circle2" || leftEdgeType == "square1" || leftEdgeType == "square2"){
-   leftOffset = 8;
+   leftOffset = 8 * edgeScale/100;
  }
  if(rightEdgeType == "circle1" || rightEdgeType == "circle2" || rightEdgeType == "square1" || rightEdgeType == "square2"){
-   rightOffset = 8;
+   rightOffset = 8 * edgeScale/100;
  }
  const line = createLine({
    sx: x,
@@ -135,7 +135,7 @@ function createLine(parms, leftOffset, rightOffset){
 
 function createEdge(parms, isRight){
 
- console.log("createEdge", parms);
+ //console.log("createEdge", parms);
  const x = parms.x;
  const y = parms.y;
  const type = parms.type;
@@ -252,8 +252,8 @@ function createEdge(parms, isRight){
    break;
 
    case "none":
-
     path = new Path();
+    path.moveInParentCoordinates(x,y);
    break;
  }
  path.strokeWidth = lineWidth;
