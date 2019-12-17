@@ -4,10 +4,10 @@ const { editDocument } = require("application");
 let panel;
 const defaultParms = {
   leftEdgeType: "none",
-  rightEdgeType: "arrow3",
+  rightEdgeType: "arrow1",
   lineWidth: 1,
   edgeScale: 100,
-  color: "#333333"
+  color: "#666666"
 }
 
 function create(onActionButton, onChangeProperty) {
@@ -118,6 +118,7 @@ function create(onActionButton, onChangeProperty) {
             <option value="circle2">円形２</option>
             <option value="square1">四角１</option>
             <option value="square2">四角２</option>
+            <option value="bar">縦線</option>
        </select>
      </label>
      <label class="inlineBlock">
@@ -131,6 +132,7 @@ function create(onActionButton, onChangeProperty) {
             <option value="circle2">円形２</option>
             <option value="square1">四角１</option>
             <option value="square2">四角２</option>
+            <option value="bar">縦線</option>
        </select>
      </label>
    </div>

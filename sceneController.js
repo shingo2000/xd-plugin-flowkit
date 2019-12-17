@@ -29,15 +29,6 @@ function drawConnector(parms, selection){
  const lineWidth = parms.lineWidth;
  const color = parms.color;
 
- const line = createLine({
-   sx: x,
-   sy: y,
-   ex: x + width,
-   ey: y + height,
-   type: lineType,
-   lineWidth: lineWidth,
-   color: color
- });
 
  // create leftEdge
  let edgeX = x;
@@ -50,7 +41,8 @@ function drawConnector(parms, selection){
    scale: edgeScale,
    color: color
  }, false);
- if(lineType == "curve"){
+
+ if(lineType == "curve" && (leftEdgeType == "arrow1" || leftEdgeType == "arrow2" || leftEdgeType == "arrow3" || leftEdgeType == "bar")){
    leftEdge.rotateAround(90, {x:0, y:0})
  }
 
@@ -69,12 +61,33 @@ function drawConnector(parms, selection){
    color: color
  }, true);
 
+
+ // create line
+
+ let leftOffset = 0;
+ let rightOffset = 0;
+ if(leftEdgeType == "circle1" || leftEdgeType == "circle2" || leftEdgeType == "square1" || leftEdgeType == "square2"){
+   leftOffset = 8;
+ }
+ if(rightEdgeType == "circle1" || rightEdgeType == "circle2" || rightEdgeType == "square1" || rightEdgeType == "square2"){
+   rightOffset = 8;
+ }
+ const line = createLine({
+   sx: x,
+   sy: y,
+   ex: x + width,
+   ey: y + height,
+   type: lineType,
+   lineWidth: lineWidth,
+   color: color
+ }, leftOffset, rightOffset);
+
  return [line, leftEdge, rightEdge];
 
 }
 
 
-function createLine(parms){
+function createLine(parms, leftOffset, rightOffset){
  const sx = parms.sx;
  const sy = parms.sy;
  const ex = parms.ex;
@@ -88,24 +101,24 @@ function createLine(parms){
  switch(type){
 
    case "straight":
-    p0 = sx + "," + sy;
-    p1 = ex + "," + sy;
+    p0 = (sx + leftOffset) + "," + sy;
+    p1 = (ex - rightOffset) + "," + sy;
     pathData = `M ${p0} L ${p0} ${p1}`;
    break;
 
    case "curve":
-    p0 = sx + "," + sy;
+    p0 = sx + "," + (sy + leftOffset);
     p1 = sx + "," + ey;
-    p2 = ex + "," + ey;
+    p2 = (ex - rightOffset) + "," + ey;
     pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
    break;
 
    case "snake":
     const mx = (ex - sx)/2 + sx;
-    p0 = sx + "," + sy;
+    p0 = (sx + leftOffset) + "," + sy;
     p1 = mx + "," + sy;
     p2 = mx + "," + ey;
-    p3 = ex + "," + ey;
+    p3 = (ex - rightOffset) + "," + ey;
     pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3}`;
    break;
 
@@ -139,20 +152,23 @@ function createEdge(parms, isRight){
  switch(type){
 
    case "arrow1":
-    if(isRight){
-      p0 = (-15*scale) + "," + (-10*scale);
-      p1 = "0,0";
-      p2 = (-15*scale) + "," + (10*scale);
-    }else{
-      p0 = (15*scale) + "," + (-10*scale);
-      p1 = "0,0";
-      p2 = (15*scale) + "," + (10*scale);
-    }
-    pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
-    stroke = new Color(color);
-    path = new Path();
-    path.pathData = pathData;
-    path.moveInParentCoordinates(x,y);
+     if(isRight){
+       p0 = (-15*scale) + "," + (-8*scale);
+       p1 = "0,0";
+       p2 = (-15*scale) + "," + (8*scale);
+       p3 = (-12*scale) + ",0";
+     }else{
+       p0 = (15*scale) + "," + (-8*scale);
+       p1 = "0,0";
+       p2 = (15*scale) + "," + (8*scale);
+       p3 = (12*scale) + ",0";
+     }
+     pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} Z`;
+     path = new Path();
+     path.pathData = pathData;
+     path.stroke = new Color(color);
+     path.fill = new Color(color);
+     path.moveInParentCoordinates(x,y);
    break;
 
    case "arrow2":
@@ -166,84 +182,73 @@ function createEdge(parms, isRight){
        p2 = (15*scale) + "," + (8*scale);
      }
      pathData = `M ${p0} L ${p0} ${p1} ${p2} Z`;
-     stroke = new Color(color);
-     fill = new Color(color);
      path = new Path();
      path.pathData = pathData;
+     path.stroke = new Color(color);
+     path.fill = new Color(color);
      path.moveInParentCoordinates(x,y);
    break;
 
    case "arrow3":
-     if(isRight){
-       p0 = (-15*scale) + "," + (-8*scale);
-       p1 = "0,0";
-       p2 = (-15*scale) + "," + (8*scale);
-       p3 = (-12*scale) + ",0";
-     }else{
-       p0 = (15*scale) + "," + (-8*scale);
-       p1 = "0,0";
-       p2 = (15*scale) + "," + (8*scale);
-       p3 = (12*scale) + ",0";
-     }
-     pathData = `M ${p0} L ${p0} ${p1} ${p2} ${p3} Z`;
-     stroke = new Color(color);
-     fill = new Color(color);
-     path = new Path();
-     path.pathData = pathData;
-     path.moveInParentCoordinates(x,y);
+    if(isRight){
+      p0 = (-15*scale) + "," + (-10*scale);
+      p1 = "0,0";
+      p2 = (-15*scale) + "," + (10*scale);
+    }else{
+      p0 = (15*scale) + "," + (-10*scale);
+      p1 = "0,0";
+      p2 = (15*scale) + "," + (10*scale);
+    }
+    pathData = `M ${p0} L ${p0} ${p1} ${p2}`;
+    path = new Path();
+    path.pathData = pathData;
+    path.stroke = new Color(color);
+    path.moveInParentCoordinates(x,y);
    break;
 
    case "circle1":
-    stroke = new Color(color);
     path = new Ellipse();
     path.radiusX = 8*scale;
     path.radiusY = 8*scale;
-    if(isRight){
-      path.moveInParentCoordinates(x, y-8*scale);
-    }else{
-      path.moveInParentCoordinates(x-16*scale, y-8*scale);
-    }
+    path.stroke = new Color(color);
+    path.moveInParentCoordinates(x-8*scale, y-8*scale);
    break;
 
    case "circle2":
-    stroke = new Color(color);
-    fill = new Color(color);
     path = new Ellipse();
     path.radiusX = 8*scale;
     path.radiusY = 8*scale;
-    if(isRight){
-      path.moveInParentCoordinates(x, y-8*scale);
-    }else{
-      path.moveInParentCoordinates(x-16*scale, y-8*scale);
-    }
+    path.stroke = new Color(color);
+    path.fill = new Color(color);
+    path.moveInParentCoordinates(x-8*scale, y-8*scale);
    break;
 
    case "square1":
-    stroke = new Color(color);
     path = new Rectangle();
     path.width = 16*scale;
     path.height = 16*scale;
-    if(isRight){
-      path.moveInParentCoordinates(x, y-8*scale);
-    }else{
-      path.moveInParentCoordinates(x-16*scale, y-8*scale);
-    }
+    path.stroke = new Color(color);
+    path.moveInParentCoordinates(x-8*scale, y-8*scale);
    break;
 
    case "square2":
-    stroke = new Color(color);
-    fill = new Color(color);
     path = new Rectangle();
     path.width = 16*scale;
     path.height = 16*scale;
-    if(isRight){
-      path.moveInParentCoordinates(x, y-8*scale);
-    }else{
-      path.moveInParentCoordinates(x-16*scale, y-8*scale);
-    }
+    path.stroke = new Color(color);
+    path.fill = new Color(color);
+    path.moveInParentCoordinates(x-8*scale, y-8*scale);
+
    break;
 
    case "bar":
+     p0 = "0," + (-8*scale);
+     p1 = "0," + (8*scale);
+   pathData = `M ${p0} L ${p0} ${p1}`;
+   path = new Path();
+   path.pathData = pathData;
+   path.stroke = new Color(color);
+   path.moveInParentCoordinates(x,y);
    break;
 
    case "none":
@@ -251,8 +256,6 @@ function createEdge(parms, isRight){
     path = new Path();
    break;
  }
- path.stroke = new Color(color);
- path.fill = new Color(color);
  path.strokeWidth = lineWidth;
  if(isRight){
    path.name = "rightEdge";
