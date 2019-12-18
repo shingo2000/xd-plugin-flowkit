@@ -10,6 +10,7 @@
  const {Artboard, SceneNode} = require("scenegraph");
  const sceneController = require("./sceneController.js");
  const panelController = require("./panelController.js");
+ const viewport = require("viewport");
 
 
  function show(event) {
@@ -133,8 +134,11 @@
      }
    } else {
 
-     console.log("else");
-     // viewportの中心に配置
+     // viewportの真ん中より左上に配置
+     x = viewport.bounds.x + viewport.bounds.width / 3;
+     y = viewport.bounds.y + viewport.bounds.height / 3;
+
+
 
    }
 
