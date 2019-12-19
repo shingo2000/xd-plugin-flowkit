@@ -43,14 +43,34 @@
    const line = group.children.at(0);
    const leftEdge = group.children.at(1);
    const rightEdge = group.children.at(2);
+   const leftEdgeType = parms.leftEdgeType;
+   const rightEdgeType = parms.rightEdgeType;
+
+   let x = line.localBounds.x;
+   let y = line.localBounds.y;
+   let width = line.localBounds.width;
+   let height = line.localBounds.height;
+
+   // EdgeTypeによってLineの長さをOffset分調整
+   const leftOffset = sceneController.lineOffset[leftEdgeType] * parms.edgeScale/100;
+   const rightOffset = sceneController.lineOffset[rightEdgeType] * parms.edgeScale/100;
+
+   if(parms.lineType == "curve"){
+     width += rightOffset;
+     height += leftOffset;
+     y -= leftOffset;
+   }else{
+     width += leftOffset + rightOffset;
+     x -= leftOffset;
+   }
 
    const items = sceneController.drawConnector({
-     x: line.localBounds.x,
-     y: line.localBounds.y,
-     width: line.localBounds.width,
-     height: line.localBounds.height,
-     leftEdgeType: parms.leftEdgeType,
-     rightEdgeType: parms.rightEdgeType,
+     x: x,
+     y: y,
+     width: width,
+     height: height,
+     leftEdgeType: leftEdgeType,
+     rightEdgeType: rightEdgeType,
      edgeScale: parms.edgeScale,
      lineType: parms.lineType,
      lineWidth: parms.lineWidth,

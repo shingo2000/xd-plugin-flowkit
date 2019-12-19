@@ -16,6 +16,17 @@
    }
   */
 
+const lineOffset = {
+  none: 0,
+  arrow1: 0,
+  arrow2: 0,
+  arrow3: 0,
+  circle1: 8,
+  circle2: 8,
+  square1: 8,
+  square2: 8,
+  bar: 0
+}
 
 function drawConnector(parms, selection){
  const x = parms.x;
@@ -64,14 +75,9 @@ function drawConnector(parms, selection){
 
  // create line
 
- let leftOffset = 0;
- let rightOffset = 0;
- if(leftEdgeType == "circle1" || leftEdgeType == "circle2" || leftEdgeType == "square1" || leftEdgeType == "square2"){
-   leftOffset = 8 * edgeScale/100;
- }
- if(rightEdgeType == "circle1" || rightEdgeType == "circle2" || rightEdgeType == "square1" || rightEdgeType == "square2"){
-   rightOffset = 8 * edgeScale/100;
- }
+ let leftOffset = lineOffset[leftEdgeType] * edgeScale/100;
+ let rightOffset = lineOffset[rightEdgeType] * edgeScale/100;
+
  const line = createLine({
    sx: x,
    sy: y,
@@ -267,3 +273,4 @@ function createEdge(parms, isRight){
 }
 
 module.exports.drawConnector = drawConnector;
+module.exports.lineOffset = lineOffset;
