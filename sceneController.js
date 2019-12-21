@@ -140,7 +140,6 @@ function createLine(parms, leftOffset, rightOffset){
 
 
 function createEdge(parms, isRight){
-
  const x = parms.x;
  const y = parms.y;
  const type = parms.type;

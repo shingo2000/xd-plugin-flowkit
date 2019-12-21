@@ -1,5 +1,6 @@
 
 const { editDocument } = require("application");
+const application = require("application");
 
 let panel;
 const defaultParms = {
@@ -67,7 +68,14 @@ const labels = {
 }
 
 function create(onActionButton, onChangeProperty) {
-  const _labels = labels.default;
+
+  let _labels;
+  if(application.appLanguage == 'ja'){
+    _labels = labels.ja;
+  }else{
+    _labels = labels.default;
+  }
+
   const html = `
 <style>
  .actionButton {
@@ -168,7 +176,7 @@ function create(onActionButton, onChangeProperty) {
      <label class="edge">
        <span>${_labels.edit.leftEdge}</span>
        <select id="leftEdge">
-            <option value="none">${_labels.edit.edgeType.none}</option>
+            <option value="none" selected>${_labels.edit.edgeType.none}</option>
             <option value="arrow1">${_labels.edit.edgeType.arrow1}</option>
             <option value="arrow2">${_labels.edit.edgeType.arrow2}</option>
             <option value="arrow3">${_labels.edit.edgeType.arrow3}</option>
@@ -183,7 +191,7 @@ function create(onActionButton, onChangeProperty) {
        <span>${_labels.edit.rightEdge}</span>
        <select id="rightEdge">
             <option value="none">${_labels.edit.edgeType.none}</option>
-            <option value="arrow1">${_labels.edit.edgeType.arrow1}</option>
+            <option value="arrow1" selected>${_labels.edit.edgeType.arrow1}</option>
             <option value="arrow2">${_labels.edit.edgeType.arrow2}</option>
             <option value="arrow3">${_labels.edit.edgeType.arrow3}</option>
             <option value="circle1">${_labels.edit.edgeType.circle1}</option>
