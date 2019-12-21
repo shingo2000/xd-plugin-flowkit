@@ -28,7 +28,7 @@ const lineOffset = {
   bar: 0
 }
 
-function drawConnector(parms, selection){
+function drawConnector(parms){
  const x = parms.x;
  const y = parms.y;
  const width = parms.width;

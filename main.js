@@ -96,17 +96,21 @@
  }
 
  function draw(actionName, selection){
-   console.log("draw",actionName);
 
    let x = 10;
    let y = 10;
    let width = 100;
    let height = 100;
+   if(selection.items[0] == null && selection.focusedArtboard){
+     selection.items = [selection.focusedArtboard];
+   }
 
    if(selection.items[0]){
      if(selection.items[0] instanceof Artboard){
-       x = 10;
-       y = 10;
+       const bounds = selection.items[0].globalBounds;
+       x = viewport.bounds.x + viewport.bounds.width / 3 - bounds.x;
+       y = viewport.bounds.y + viewport.bounds.height / 3 - bounds.y;
+
      }else{
       if(selection.items.length == 2){
         // ２つ選択したオブジェクトの間を繋ぐ線を引く
@@ -153,11 +157,9 @@
       }
      }
    } else {
-
      // viewportの真ん中より左上に配置
      x = viewport.bounds.x + viewport.bounds.width / 3;
      y = viewport.bounds.y + viewport.bounds.height / 3;
-
 
 
    }
@@ -176,8 +178,7 @@
      lineType: actionName,
      lineWidth: parms.lineWidth,
      color: parms.color
-   },selection);
-
+   });
    for(let i = 0; i < items.length; i++){
      selection.insertionParent.addChild(items[i]);
    }
