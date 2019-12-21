@@ -72,7 +72,7 @@ function create(onActionButton, onChangeProperty) {
 <style>
  .actionButton {
    width: 100%;
-  background: #fff;
+   background: #fff;
    padding: 10px;
    border-radius: 4px;
    display: block;
@@ -99,16 +99,16 @@ function create(onActionButton, onChangeProperty) {
  .show{
    display: block;
  }
- .row { align-items: center; }
- div{
-   width: 100%;
- }
+ .row {
+   align-items: center;
+  }
  .spread {
        justify-content: space-between;
        width: 100%;
  }
- .inlineBlock{
+ .edge{
    display: inlineBlock;
+   width: 50%;
 
  }
  input[type="range"]{
@@ -116,6 +116,7 @@ function create(onActionButton, onChangeProperty) {
  }
  label{
    margin: 0.2em 0;
+   width: 100%;
  }
  .propertyBox{
    background: rgba(0,0,0,0.025);
@@ -164,7 +165,7 @@ function create(onActionButton, onChangeProperty) {
      <input type="range" id="edgeScale" min=0 max=200 value=100 step=25 />
    </label>
    <div>
-     <label class="inlineBlock">
+     <label class="edge">
        <span>${_labels.edit.leftEdge}</span>
        <select id="leftEdge">
             <option value="none">${_labels.edit.edgeType.none}</option>
@@ -178,7 +179,7 @@ function create(onActionButton, onChangeProperty) {
             <option value="bar">${_labels.edit.edgeType.bar}</option>
        </select>
      </label>
-     <label class="inlineBlock">
+     <label class="edge">
        <span>${_labels.edit.rightEdge}</span>
        <select id="rightEdge">
             <option value="none">${_labels.edit.edgeType.none}</option>
@@ -262,7 +263,6 @@ function hidePropertyPanel(){
 }
 
 function updateToolPanel(parms){
-  //console.log("updateToolPanel",parms)
   panel.querySelector("#propertyPanel #lineWidth").value = parms.lineWidth;
   panel.querySelector("#propertyPanel #leftEdge").value = parms.leftEdgeType;
   panel.querySelector("#propertyPanel #rightEdge").value = parms.rightEdgeType;
@@ -274,7 +274,6 @@ function updateToolPanel(parms){
 
 }
 function getParms(){
-  //console.log("getParms", document.querySelector("#leftEdge").value, document.querySelector("#rightEdge").value)
   return {
     lineWidth: document.querySelector("#lineWidth").value - 0,
     leftEdgeType: document.querySelector("#leftEdge").value,

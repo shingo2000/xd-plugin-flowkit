@@ -2,7 +2,7 @@
  const {Path, Color, Ellipse, Rectangle} = require("scenegraph");
 
 
-  /*
+  /* --------------------------
    drowParms = {
      x:Number,
      y:Number,
@@ -14,7 +14,7 @@
      lineWidth:Number,
      color:String
    }
-  */
+  ------------------------------ */
 
 const lineOffset = {
   none: 0,
@@ -141,7 +141,6 @@ function createLine(parms, leftOffset, rightOffset){
 
 function createEdge(parms, isRight){
 
- //console.log("createEdge", parms);
  const x = parms.x;
  const y = parms.y;
  const type = parms.type;

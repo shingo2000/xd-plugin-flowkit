@@ -28,7 +28,6 @@
  }
 
  function update(selection) {
-   //console.log("update",selection.items[0]);
    if(selection.items[0] && selection.items[0].pluginData && selection.items[0].pluginData.name == "flowKitConnector"){
      panelController.showPropertyPanel(selection.items[0].pluginData);
    }else{
@@ -38,7 +37,6 @@
 
  function redraw(parms,selection){
 
-   console.log("redraw",parms);
    const group = selection.items[0];
    const line = group.children.at(0);
    const leftEdge = group.children.at(1);
