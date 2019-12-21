@@ -9,8 +9,65 @@ const defaultParms = {
   edgeScale: 100,
   color: "#666666"
 }
+const labels = {
+  default:{
+    menu:{
+      straight: "Straight",
+      curve: "Curve",
+      snake: "Snake"
+    },
+    edit:{
+      title: "Edit",
+      lineWidth: "Line Width",
+      edgeScale: "Edge Scale",
+      leftEdge: "Left",
+      rightEdge: "Right",
+      color: "Color",
+      default: "Reset to default",
+      edgeType:{
+        none: "none",
+        arrow1: "arrow1",
+        arrow2: "arrow2",
+        arrow3: "arrow3",
+        circle1: "circle1",
+        circle2: "circle2",
+        square1: "square1",
+        square2: "square2",
+        bar: "bar"
+      }
+    }
+  },
+  ja:{
+    menu:{
+      straight: "直線",
+      curve: "折れ線",
+      snake: "カギ線"
+    },
+    edit:{
+      title: "編集",
+      lineWidth: "先の太さ",
+      edgeScale: "ポイントの大きさ",
+      leftEdge: "左端",
+      rightEdge: "右端",
+      color: "着色",
+      default: "初期値に戻す",
+      edgeType:{
+        none: "無し",
+        arrow1: "矢印１",
+        arrow2: "矢印２",
+        arrow3: "矢印３",
+        circle1: "円形１",
+        circle2: "円形２",
+        square1: "四角１",
+        square2: "四角２",
+        bar: "縦線"
+      }
+    }
+  }
+}
 
 function create(onActionButton, onChangeProperty) {
+  const _labels = labels.default;
   const html = `
 <style>
  .actionButton {
@@ -78,72 +135,72 @@ function create(onActionButton, onChangeProperty) {
 <div id="toolPanel" class="show">
  <a href="#" data-action="straight" class="actionButton">
    <img src="assets/icon_straight.png" />
-   <span>直線</span>
+   <span>${_labels.menu.straight}</span>
  </a>
  <a href="#" data-action="curve" class="actionButton">
    <img src="assets/icon_curve.png" />
-   <span>折れ線</span>
+   <span>${_labels.menu.curve}</span>
  </a>
  <a href="#" data-action="snake" class="actionButton">
    <img src="assets/icon_snake.png" />
-   <span>カギ線</span>
+   <span>${_labels.menu.snake}</span>
  </a>
 </div>
 <div id="propertyPanel" class="hide">
- <h2>編集</h2>
+ <h2>${_labels.edit.title}</h2>
  <div class="propertyBox">
    <label>
      <div class="row spread">
-         <span>線の太さ</span>
+         <span>${_labels.edit.lineWidth}</span>
          <span class="lineWidthValue">1</span>
      </div>
      <input type="range" id="lineWidth" min=0.5 max=5 value=1 step=0.5 />
    </label>
    <label>
      <div class="row spread">
-         <span>ポイントの大きさ</span>
+         <span>${_labels.edit.edgeScale}</span>
          <span class="edgeScaleValue">100%<span>
      </div>
      <input type="range" id="edgeScale" min=0 max=200 value=100 step=25 />
    </label>
    <div>
      <label class="inlineBlock">
-       <span>左端</span>
+       <span>${_labels.edit.leftEdge}</span>
        <select id="leftEdge">
-            <option value="none" selected>なし</option>
-            <option value="arrow1">矢印１</option>
-            <option value="arrow2">矢印２</option>
-            <option value="arrow3">矢印３</option>
-            <option value="circle1">円形１</option>
-            <option value="circle2">円形２</option>
-            <option value="square1">四角１</option>
-            <option value="square2">四角２</option>
-            <option value="bar">縦線</option>
+            <option value="none">${_labels.edit.edgeType.none}</option>
+            <option value="arrow1">${_labels.edit.edgeType.arrow1}</option>
+            <option value="arrow2">${_labels.edit.edgeType.arrow2}</option>
+            <option value="arrow3">${_labels.edit.edgeType.arrow3}</option>
+            <option value="circle1">${_labels.edit.edgeType.circle1}</option>
+            <option value="circle2">${_labels.edit.edgeType.circle2}</option>
+            <option value="square1">${_labels.edit.edgeType.square1}</option>
+            <option value="square2">${_labels.edit.edgeType.square2}</option>
+            <option value="bar">${_labels.edit.edgeType.bar}</option>
        </select>
      </label>
      <label class="inlineBlock">
-       <span>右端</span>
+       <span>${_labels.edit.rightEdge}</span>
        <select id="rightEdge">
-            <option value="none">なし</option>
-            <option value="arrow1">矢印１</option>
-            <option value="arrow2">矢印２</option>
-            <option value="arrow3" selected>矢印３</option>
-            <option value="circle1">円形１</option>
-            <option value="circle2">円形２</option>
-            <option value="square1">四角１</option>
-            <option value="square2">四角２</option>
-            <option value="bar">縦線</option>
+            <option value="none">${_labels.edit.edgeType.none}</option>
+            <option value="arrow1">${_labels.edit.edgeType.arrow1}</option>
+            <option value="arrow2">${_labels.edit.edgeType.arrow2}</option>
+            <option value="arrow3">${_labels.edit.edgeType.arrow3}</option>
+            <option value="circle1">${_labels.edit.edgeType.circle1}</option>
+            <option value="circle2">${_labels.edit.edgeType.circle2}</option>
+            <option value="square1">${_labels.edit.edgeType.square1}</option>
+            <option value="square2">${_labels.edit.edgeType.square2}</option>
+            <option value="bar">${_labels.edit.edgeType.bar}</option>
        </select>
      </label>
    </div>
    <label>
-    <span>着色</span>
+    <span>${_labels.edit.color}</span>
     <input type="text" id="color" value="#666666" />
    </label>
    <input type="hidden" id="lineType" value="straight" style="display:none" />
  </div>
  <div class="footer">
-  <button id="defaultButton">初期値に戻す</button>
+  <button id="defaultButton">${_labels.edit.default}</button>
  </div>
 </div>
  `;
