@@ -158,20 +158,20 @@ function create(onActionButton, onChangeProperty) {
 <div id="propertyPanel" class="hide">
  <h2>${_labels.edit.title}</h2>
  <div class="propertyBox">
-   <label>
+   <div><label>
      <div class="row spread">
          <span>${_labels.edit.lineWidth}</span>
          <span class="lineWidthValue">1</span>
      </div>
      <input type="range" id="lineWidth" min=0.5 max=5 value=1 step=0.5 />
-   </label>
-   <label>
+   </label></div>
+   <div><label>
      <div class="row spread">
          <span>${_labels.edit.edgeScale}</span>
          <span class="edgeScaleValue">100%<span>
      </div>
      <input type="range" id="edgeScale" min=0 max=200 value=100 step=25 />
-   </label>
+   </label></div>
    <div>
      <label class="edge">
        <span>${_labels.edit.leftEdge}</span>
