@@ -8,7 +8,7 @@ Flowkitはフロー図などに使う矢印の線を簡単に作成できるXD�
 
 ## Install
 
-coming soon.
+https://xd.adobelanding.com/en/xd-plugin-download/?name=27bd41e6
 
 ## Tutorial Video (YouTube)
 
