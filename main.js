@@ -110,47 +110,48 @@
        y = viewport.bounds.y + viewport.bounds.height / 3 - bounds.y;
 
      }else{
+
+      let b0 = selection.items[0].boundsInParent;
+      let b1;
+
       if(selection.items.length == 2){
         // ２つ選択したオブジェクトの間を繋ぐ線を引く
-        let x0 = selection.items[0].translation.x;
-        let y0 = selection.items[0].translation.y;
-        let x1 = selection.items[1].translation.x;
-        let y1 = selection.items[1].translation.y;
+        b1 = selection.items[1].boundsInParent;
 
         if(actionName == "curve"){
-          if(x0 < x1){
-            x = x0 + selection.items[0].localBounds.width/2;
-            y = y0 + selection.items[0].localBounds.height;
-            width = x1 - x;
-            height = (y1 + selection.items[1].localBounds.height/2) - y;
+          if(b0.x < b1.x){
+            x = b0.x + b0.width/2;
+            y = b0.y + b0.height;
+            width = b1.x - x;
+            height = b1.y + b1.height/2 - y;
           }else{
-            x = x1 + selection.items[1].localBounds.width/2;
-            y = y1 + selection.items[1].localBounds.height;
-            width = x0 - x;
-            height = (y0 + selection.items[0].localBounds.height/2) - y;
+            x = b1.x + b1.width/2;
+            y = b1.y + b1.height;
+            width = b0.x - x;
+            height = b0.y + b0.height/2 - y;
           }
 
         }else{
-          if(x0 < x1){
-            x = x0 + selection.items[0].localBounds.width;
-            y = y0 + selection.items[0].localBounds.height/2;
-            width = x1 - x;
-            height = (y1 + selection.items[1].localBounds.height/2) - y;
+          if(b0.x < b1.x){
+            x = b0.x + b0.width;
+            y = b0.y + b0.height/2;
+            width = b1.x - x;
+            height = b1.y + b1.height/2 - y;
           }else{
-            x = x1 + selection.items[1].localBounds.width;
-            y = y1 + selection.items[1].localBounds.height/2;
-            width = x0 - x;
-            height = (y0 + selection.items[0].localBounds.height/2) - y;
+            x = b1.x + b1.width;
+            y = b1.y + b1.height/2;
+            width = b0.x - x;
+            height = b0.y + b0.height/2 - y;
           }
         }
 
       }else{
         if(actionName == "curve"){
-          x = selection.items[0].translation.x + selection.items[0].localBounds.width/2;
-          y = selection.items[0].translation.y + selection.items[0].localBounds.height;
+          x = b0.x + b0.width/2;
+          y = b0.y + b0.height;
         }else{
-          x = selection.items[0].translation.x + selection.items[0].localBounds.width;
-          y = selection.items[0].translation.y + selection.items[0].localBounds.height / 2;
+          x = b0.x + b0.width;
+          y = b0.y + b0.height/2;
         }
       }
      }
