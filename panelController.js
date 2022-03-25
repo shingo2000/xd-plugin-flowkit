@@ -100,6 +100,7 @@ function create(onActionButton, onChangeProperty) {
  .actionButton img{
    width: 24px; height: 24px;
    margin-right: 16px;
+   vertical-align: middle;
  }
  .hide {
    display: none;
@@ -215,20 +216,25 @@ function create(onActionButton, onChangeProperty) {
  `;
   panel = document.createElement("div");
   panel.innerHTML = html;
-  const buttons = panel.querySelectorAll(".actionButton");
-  for(let i = 0; i < buttons.length; i++){
-    buttons[i].addEventListener("click", _onActionButton);
-  }
-  const inputs = panel.querySelectorAll("#propertyPanel input, #propertyPanel select");
-  for(let i = 0; i < inputs.length; i++){
-    inputs[i].addEventListener("change", _onChangeProperty);
-  }
-  const sliders = panel.querySelectorAll("#edgeScale, #lineWidth");
-  for(let i = 0; i < sliders.length; i++){
-    sliders[i].addEventListener("input", _onInputSlider);
-  }
-  const defaultButton = panel.querySelector("#defaultButton");
-  defaultButton.addEventListener("click", _onDefaultButton);
+
+  setTimeout(function(){
+    const buttons = panel.querySelectorAll(".actionButton");
+
+    for(let i = 0; i < buttons.length; i++){
+      buttons[i].addEventListener("click", _onActionButton);
+    }
+    const inputs = panel.querySelectorAll("#propertyPanel input, #propertyPanel select");
+    for(let i = 0; i < inputs.length; i++){
+      inputs[i].addEventListener("change", _onChangeProperty);
+    }
+    const sliders = panel.querySelectorAll("#edgeScale, #lineWidth");
+    for(let i = 0; i < sliders.length; i++){
+      sliders[i].addEventListener("input", _onInputSlider);
+    }
+    const defaultButton = panel.querySelector("#defaultButton");
+    defaultButton.addEventListener("click", _onDefaultButton);
+  },100);
+
 
   function _onChangeProperty(e=null){
     onChangeProperty(getParms());
